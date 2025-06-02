@@ -1,6 +1,9 @@
 package lt.viko.eif.ddzikevic.consumingwebservice;
 
 import lt.viko.eif.ddzikevic.consumingwebservice.wsdl.*;
+import lt.viko.eif.ddzikevic.export.HtmlExporter;
+import lt.viko.eif.ddzikevic.export.PdfExporter;
+import lt.viko.eif.ddzikevic.export.XmlExporter;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -57,14 +60,14 @@ public class ConsumingWebServiceApplication {
                         System.out.println("Gamintojas: " + s.getManufacturer());
                         System.out.println("Pagaminimo metai: " + s.getYearBuilt());
 
-                        System.out.println("\n👨‍✈️ Įgulos nariai (" + s.getCrew().size() + "):");
+                        System.out.println("\nĮgulos nariai (" + s.getCrew().size() + "):");
                         for (CrewMember cm : s.getCrew()) {
                             System.out.println(" - " + cm.getFirstName() + " " + cm.getLastName()
                                     + " (" + cm.getPosition() + ", " + cm.getRank() + "), Amžius: " + cm.getAge()
                                     + ", Patirtis: " + cm.getExperienceYears() + " metų");
                         }
 
-                        System.out.println("\n🛰️ Misijos (" + s.getMissions().size() + "):");
+                        System.out.println("\nMisijos (" + s.getMissions().size() + "):");
                         for (Mission m : s.getMissions()) {
                             System.out.println(" - " + m.getName() + " (" + m.getStartDate() + " → " + m.getEndDate() + ")");
                         }
@@ -184,15 +187,26 @@ public class ConsumingWebServiceApplication {
                         var exportResponse = spaceshipClient.getSpaceship(exportName);
                         var spaceship = exportResponse.getSpaceship();
 
+                        if (spaceship == null || spaceship.getName() == null) {
+                            System.out.println("⚠️ Erdvėlaivis nerastas.");
+                            break;
+                        }
+
                         String xmlPath = "output/Spaceship.xml";
-                        String xslPath = "src/main/resources/spaceship-to-html.xsl";
+                        String pdfPath = "output/Spaceship.pdf";
+                        String pdfXsl = "src/main/resources/spaceship-to-fo.xsl";
                         String htmlPath = "output/Spaceship.html";
+                        String htmlXsl = "src/main/resources/spaceship-to-html.xsl";
 
-                       // XmlExporter.exportToXml(spaceship, xmlPath);
-                     //   HtmlTransformer.transform(xmlPath, xslPath, htmlPath);
+                        XmlExporter.exportToXml(exportResponse, xmlPath);
+                        PdfExporter.exportToPdf(xmlPath, pdfXsl, pdfPath);
+                        HtmlExporter.exportToHtml(xmlPath, htmlXsl, htmlPath);
 
-                        System.out.println("HTML failas sukurtas: " + htmlPath);
+                        System.out.println("✅ PDF: " + pdfPath);
+                        System.out.println("✅ HTML: " + htmlPath);
                     }
+
+
                     case 0 -> {
                         System.out.println("Programa baigta.");
                         return;

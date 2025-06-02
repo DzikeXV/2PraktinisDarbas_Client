@@ -3,57 +3,52 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:ns="http://spring.io/guides/gs-producing-web-service">
 
-    <xsl:output method="html" indent="yes"/>
+    <xsl:output method="html" indent="yes" encoding="UTF-8"/>
 
-    <xsl:template match="/ns:spaceship">
+    <xsl:template match="/">
         <html>
             <head>
-                <title>Erdvėlaivio informacija</title>
+                <title>Erdvėlaivio ataskaita</title>
                 <style>
-                    body { font-family: Arial; }
-                    table { border-collapse: collapse; margin-top: 10px; }
-                    th, td { border: 1px solid black; padding: 5px; }
-                    th { background-color: #f2f2f2; }
+                    body { font-family: Arial; margin: 2em; }
+                    h1 { color: navy; }
+                    h2 { margin-top: 1em; }
+                    .block { margin-bottom: 1em; }
                 </style>
             </head>
             <body>
-                <h1>Erdvėlaivis: <xsl:value-of select="ns:name"/></h1>
-                <p><strong>Modelis:</strong> <xsl:value-of select="ns:model"/></p>
-                <p><strong>Registracija:</strong> <xsl:value-of select="ns:registry"/></p>
-                <p><strong>Gamintojas:</strong> <xsl:value-of select="ns:manufacturer"/></p>
-                <p><strong>Pagaminimo metai:</strong> <xsl:value-of select="ns:yearBuilt"/></p>
+                <h1>Erdvėlaivio ataskaita</h1>
 
-                <h2>Įgulos nariai</h2>
-                <table>
-                    <tr>
-                        <th>Vardas</th><th>Pavardė</th><th>Pozicija</th><th>Rangas</th><th>Amžius</th><th>Patirtis</th>
-                    </tr>
+                <xsl:for-each select="ns:getSpaceshipResponse/ns:spaceship">
+                    <div class="block">
+                        <b>ID:</b> <xsl:value-of select="ns:id"/> <br/>
+                        <b>Pavadinimas:</b> <xsl:value-of select="ns:name"/> <br/>
+                        <b>Modelis:</b> <xsl:value-of select="ns:model"/> <br/>
+                        <b>Registracija:</b> <xsl:value-of select="ns:registry"/> <br/>
+                        <b>Gamintojas:</b> <xsl:value-of select="ns:manufacturer"/> <br/>
+                        <b>Metai:</b> <xsl:value-of select="ns:yearBuilt"/> <br/>
+                    </div>
+
+                    <h2>Įgulos narys</h2>
                     <xsl:for-each select="ns:crew">
-                        <tr>
-                            <td><xsl:value-of select="ns:firstName"/></td>
-                            <td><xsl:value-of select="ns:lastName"/></td>
-                            <td><xsl:value-of select="ns:position"/></td>
-                            <td><xsl:value-of select="ns:rank"/></td>
-                            <td><xsl:value-of select="ns:age"/></td>
-                            <td><xsl:value-of select="ns:experienceYears"/></td>
-                        </tr>
+                        <div class="block">
+                            <b>Vardas:</b> <xsl:value-of select="ns:firstName"/> <xsl:value-of select="ns:lastName"/> <br/>
+                            <b>Pareigos:</b> <xsl:value-of select="ns:position"/> <br/>
+                            <b>Laipsnis:</b> <xsl:value-of select="ns:rank"/> <br/>
+                            <b>Amžius:</b> <xsl:value-of select="ns:age"/> <br/>
+                            <b>Patirtis:</b> <xsl:value-of select="ns:experienceYears"/> metų
+                        </div>
                     </xsl:for-each>
-                </table>
 
-                <h2>Misijos</h2>
-                <table>
-                    <tr>
-                        <th>Pavadinimas</th><th>Pradžia</th><th>Pabaiga</th>
-                    </tr>
+                    <h2>Misijos</h2>
                     <xsl:for-each select="ns:missions">
-                        <tr>
-                            <td><xsl:value-of select="ns:name"/></td>
-                            <td><xsl:value-of select="ns:startDate"/></td>
-                            <td><xsl:value-of select="ns:endDate"/></td>
-                        </tr>
+                        <div class="block">
+                            <b>ID:</b> <xsl:value-of select="ns:id"/> <br/>
+                            <b>Pavadinimas:</b> <xsl:value-of select="ns:name"/> <br/>
+                            <b>Data:</b> <xsl:value-of select="ns:startDate"/> → <xsl:value-of select="ns:endDate"/>
+                        </div>
                     </xsl:for-each>
-                </table>
-
+                </xsl:for-each>
             </body>
         </html>
     </xsl:template>
